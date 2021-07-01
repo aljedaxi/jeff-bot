@@ -2,7 +2,7 @@
   "name": "jeff-bot",
   "version": "1.0.0",
   "main": "index.js",
-  "license": "MIT",
+  "license": "SEE LICENSE IN LICENSE.TXT",
   "dependencies": {
     "discord.js": "^12.5.3"
   }
