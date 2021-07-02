@@ -33,16 +33,17 @@ const compose = f => g => x => f (g (x))
 const send = message => s => message.channel.send (s)
 const getGifUrl = prop ('itemurl')
 const commands = {
-	'jeff me': ({client, message}) => getJeffGif ().then(
-		compose (send (message)) (map (getGifUrl)) 
-	),
+	'jeff me': ({client, message}) => getJeffGif ()
+		.then(compose (send (message)) (map (getGifUrl))),
 	jeff: ({client, message}) => message.channel.send ('@everyone my name jeff')
 }
+
+const pressF = sender => o => sender (`something went wrong: ${JSON.stringify (o)}`)
 
 const message = ({client}) => message => {
 	if (message.author.bot) return
 	Object.entries(commands).some(([k,v]) => {
-		new RegExp (k, 'ig').test(message.content) && v ({client, message})
+		new RegExp (k, 'ig').test(message.content) && v ({client, message}).catch(pressF (send (message)))
 	})
 }
 
