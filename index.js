@@ -1,12 +1,34 @@
-const Discord = require('discord.js')
-const token = process.env.TOKEN
+const Discord = require ('discord.js')
+const fetch = require ('node-fetch')
+const {
+	Nothing,
+	Just,
+	pipe,
+	prop,
+	map,
+	isJust,
+} = require ('sanctuary')
+const {TOKEN: token, TENOR_TOKEN: tenorToken} = process.env
 // const applicationId = '860018716045213696'
+const trace = s => {console.log(s); return s;};
+
+const getJeffGif = _ =>
+	fetch (`https://g.tenor.com/v1/search?q=my name jeff&key=${tenorToken}&limit=1`)
+		.then(r => r.ok ? r.json ().then(pipe ([prop ('results'), Just])) : Promise.resolve (Nothing))
 
 const ready = ({client}) => _ => {
 	console.log(`logged in as ${client.user.tag}!`)
 }
 
+const compose = f => g => x => f (g (x))
+const send = message => s => message.channel.send (s)
+const getGifUrl = prop ('itemurl')
 const commands = {
+	'jeff me': ({client, message}) => getJeffGif ().then(maybe => 
+		isJust (maybe) 
+			? compose (send (message)) (map (getGifUrl)) (maybe.value)
+			: Promise.reject ()
+	),
 	jeff: ({client, message}) => message.channel.send ('@everyone my name jeff')
 }
 
