@@ -10,10 +10,16 @@ const {
 } = require ('sanctuary')
 const {TOKEN: token, TENOR_TOKEN: tenorToken} = process.env
 // const applicationId = '860018716045213696'
-const trace = s => {console.log(s); return s;};
 
+const queries = {
+	q: 'my name is jeff',
+	key: tenorToken,
+	limit: 1,
+	contentfilter: 'off',
+}
+const qString = Object.entries(queries).map(([k, v]) => `${k}=${v}`).join('&')
 const getJeffGif = _ =>
-	fetch (`https://g.tenor.com/v1/search?q=my name jeff&key=${tenorToken}&limit=1`)
+	fetch (`https://g.tenor.com/v1/search?${qString}`)
 		.then(r => r.ok ? r.json ().then(pipe ([prop ('results'), Just])) : Promise.resolve (Nothing))
 
 const ready = ({client}) => _ => {
