@@ -20,7 +20,10 @@ const queries = {
 const qString = Object.entries(queries).map(([k, v]) => `${k}=${v}`).join('&')
 const getJeffGif = _ =>
 	fetch (`https://g.tenor.com/v1/search?${qString}`)
-		.then(r => r.ok ? r.json ().then(pipe ([prop ('results'), Just])) : Promise.resolve (Nothing))
+		.then(r => r.ok 
+			? r.json ().then(pipe ([prop ('results')])) 
+			: r.json ().then(o => Promise.reject (o))
+		)
 
 const ready = ({client}) => _ => {
 	console.log(`logged in as ${client.user.tag}!`)
@@ -30,10 +33,8 @@ const compose = f => g => x => f (g (x))
 const send = message => s => message.channel.send (s)
 const getGifUrl = prop ('itemurl')
 const commands = {
-	'jeff me': ({client, message}) => getJeffGif ().then(maybe => 
-		isJust (maybe) 
-			? compose (send (message)) (map (getGifUrl)) (maybe.value)
-			: Promise.reject ()
+	'jeff me': ({client, message}) => getJeffGif ().then(
+		compose (send (message)) (map (getGifUrl)) 
 	),
 	jeff: ({client, message}) => message.channel.send ('@everyone my name jeff')
 }
