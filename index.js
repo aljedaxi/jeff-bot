@@ -44,7 +44,7 @@ const pressF = sender => o => sender (`something went wrong: ${JSON.stringify (o
 const message = ({client}) => message => {
 	if (message.author.bot) return
 	Object.entries(commands).some(([k,v]) => {
-		new RegExp (k, 'ig').test(message.content) && v ({client, message}).catch(pressF (send (message))) && true
+		new RegExp (k, 'ig').test(message.content) && v ({client, message}).catch(pressF (send (message))), true
 	})
 }
 
